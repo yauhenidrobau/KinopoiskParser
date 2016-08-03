@@ -65,18 +65,18 @@
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="LcB-j4-NcS">
                                             <rect key="frame" x="163" y="8" width="429" height="133"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kbP-95-oh6">
-                                                    <rect key="frame" x="0.0" y="0.0" width="35" height="36"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kbP-95-oh6">
+                                                    <rect key="frame" x="0.0" y="0.0" width="34" height="36"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="36" id="79c-yn-ovR"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZU8-sE-A3K">
-                                                    <rect key="frame" x="0.0" y="36" width="75" height="97"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZU8-sE-A3K">
+                                                    <rect key="frame" x="0.0" y="36" width="79" height="97"/>
+                                                    <fontDescription key="fontDescription" type="italicSystem" pointSize="15"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -101,7 +101,7 @@
                                         <constraint firstItem="LcB-j4-NcS" firstAttribute="leading" secondItem="7pX-T7-VOz" secondAttribute="leadingMargin" constant="155" id="76X-zG-EL8"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="LcB-j4-NcS" secondAttribute="bottom" id="GHJ-U5-Vad"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="LcB-j4-NcS" secondAttribute="trailing" id="MjV-Zw-EGc"/>
-                                        <constraint firstItem="ZU8-sE-A3K" firstAttribute="leading" secondItem="dys-s6-gTL" secondAttribute="trailing" constant="13" id="N3o-cB-xNk"/>
+                                        <constraint firstItem="ZU8-sE-A3K" firstAttribute="leading" secondItem="dys-s6-gTL" secondAttribute="trailing" constant="15" id="N3o-cB-xNk"/>
                                         <constraint firstAttribute="topMargin" secondItem="LcB-j4-NcS" secondAttribute="top" id="Zmf-le-FOF"/>
                                         <constraint firstAttribute="bottomMargin" secondItem="LcB-j4-NcS" secondAttribute="bottom" id="uFI-1C-zHV"/>
                                     </constraints>

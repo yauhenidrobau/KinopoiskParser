@@ -13,77 +13,47 @@ import CoreData
 
 class NewsTableViewController: UITableViewController, XMLParserDelegate, NSFetchedResultsControllerDelegate {
 
-    var parser: XMLParser!
+    //var parser: XMLParser!
+    let parser = XMLParser.sharedInstance
+    var const = Constants()
     var fetchedResultsController: NSFetchedResultsController!
-    var film: [Film] = []
-   // var film: Film!
     
     func parsingWasFinished() {
         self.tableView.reloadData()
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        var fetchRequest = NSFetchRequest(entityName: "Film")
-        var sortDescriptor = NSSortDescriptor(key: "titleNews", ascending: true)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        
-        if let manageObjectContext = (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext {
-            fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: manageObjectContext, sectionNameKeyPath: nil, cacheName: nil)
-            fetchedResultsController.delegate = self
-            
-            do {
-                try fetchedResultsController.performFetch()
-            } catch {
-                print(error)
-            }
-        }
-        
-        
+       
         // auto re-sizing cell
         tableView.estimatedRowHeight = 80
         tableView.rowHeight = UITableViewAutomaticDimension
         
-        // Parsing
-        let url = NSURL(string: "https://www.kinopoisk.ru/news_premiers.rss")
-        parser = XMLParser()
-        parser.delegate = self
-        
-    
-      //background threading
+        //background threading
         let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
         dispatch_async(dispatch_get_global_queue(priority, 0), { ()->() in
-             self.parser.beginParsing(url!)
+            
+            self.parser.beginParsing(self.const.url!)
+        
             dispatch_async(dispatch_get_main_queue(), {
-                self.parsingWasFinished()            })
+                self.parsingWasFinished()
+            })
         })
        
-        
-       
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
     }
 
     // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return parser.arrParsedData.count
+        return (self.parser.arrParsedData.count)
     }
 
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
@@ -111,7 +81,6 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, NSFetch
             
         }
         
-        film = controller.fetchedObjects as! [Film]
     }
     
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
@@ -129,8 +98,7 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, NSFetch
         cell.titleLabel?.text = currentDictionary["title"]
         cell.desctiptionLabel?.text = currentDictionary["description"]
         if currentDictionary["url"] != nil {
-     //  cell.imageNewsView?.image = film.urlImage
-        // Configure the cell...
+            cell.imageNewsView?.image = UIImage(named: currentDictionary["url"]!)
         }
 
         return cell

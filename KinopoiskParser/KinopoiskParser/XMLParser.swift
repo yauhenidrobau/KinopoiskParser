@@ -15,8 +15,11 @@ import CoreData
 
 class XMLParser: NSObject, NSXMLParserDelegate {
     
-    var film: [Film] = []
+   // var film: [Film] = []
+    static let sharedInstance = XMLParser()
     
+    
+        
     var arrParsedData = [Dictionary<String, String>]()
     
     var currentDataDictionary = Dictionary<String, String>()
@@ -32,18 +35,16 @@ class XMLParser: NSObject, NSXMLParserDelegate {
     var urlImage = ""
     
     var delegate : XMLParserDelegate?
+    
   
     
-    func beginParsing(rssURL: NSURL) {
-        let parser = NSXMLParser(contentsOfURL: rssURL)
+    func beginParsing(rssNews : NSURL) {
+        let parser = NSXMLParser(contentsOfURL: rssNews)
         parser?.delegate = self
         parser?.parse()
     }
     
     func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
-       // if(elementName == "item"){
-        
-        
             currentElement = elementName
         if (elementName as NSString).isEqualToString("item") {
             
@@ -54,7 +55,7 @@ class XMLParser: NSObject, NSXMLParserDelegate {
             linkFeed = []
             urlImage = ""
         }
-       // }
+      
     }
     
     func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
@@ -62,62 +63,34 @@ class XMLParser: NSObject, NSXMLParserDelegate {
        
         //save data
         if (elementName as NSString).isEqualToString("item") {
-            //  if(!foundCharacters.isEmpty)&&(foundCharacters != "\n"){
         
+            if titleFeed != "" {
+                currentDataDictionary["title"] = titleFeed
+            
+            }
         
-        if titleFeed != "" {
-            currentDataDictionary["title"] = titleFeed
+            if !linkFeed.isEmpty {
+                currentDataDictionary["link"] = linkFeed[0]
+            }
             
-        }
-        
-        if !linkFeed.isEmpty {
-            foundCharacters = (foundCharacters as NSString).substringFromIndex(0)
-            currentDataDictionary["link"] = linkFeed[0]
-        }
+            if descriptionFeed != "" {
+                currentDataDictionary["description"] = descriptionFeed
+            }
             
-        if descriptionFeed != "" {
-            currentDataDictionary["description"] = descriptionFeed
-        }
+            if pubDateFeed != "" {
+                currentDataDictionary["pubDate"] = pubDateFeed
+            }
             
-        if pubDateFeed != "" {
-            currentDataDictionary["pubDate"] = pubDateFeed
-        }
-            
-        if urlImage != ""{
-            
-            foundCharacters = (foundCharacters as NSString).substringFromIndex(0)
-            currentDataDictionary["url"] = urlImage
-        }
-          // foundCharacters = ""
-        
-            // save in CoreData
-            if let managedObjectContext = (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext {
-                film = NSEntityDescription.insertNewObjectForEntityForName("Film", inManagedObjectContext: managedObjectContext) as! Film
-                
-                film.titleFeed = currentDictionary["title"]
-                film.descriptionFeed = currentDictionary["description"]
-                film.pubDateFeed = currentDictionary["pubDate"]
-                film.linkFeed = currentDictionary["link"]
-              //  if let filmImageNews = cell.imageNewsView.image {
-                    film.urlImage = UIImagePNGRepresentation(filmImageNews)
-                    //self.imageView.sd_setImageWithURL(self.imageURL)
-              //  }
-                
-                do {
-                    try managedObjectContext.save()
-                } catch {
-                    print(error)
-                    //return
-                }
+            if urlImage != ""{
+                currentDataDictionary["url"] = urlImage
             }
             arrParsedData.append(currentDataDictionary)
-            //  }
         }
     }
 
     
     func parser(parser: NSXMLParser, foundCharacters string: String) {
-       // if currentElement == "item"{
+       
         if currentElement == "title" {
             titleFeed += string
         } else if currentElement == "description" {
@@ -126,15 +99,15 @@ class XMLParser: NSObject, NSXMLParserDelegate {
             linkFeed.append(string)
         } else if currentElement == "pubDate" {
             pubDateFeed += string
-        } else if currentElement == "url" {
+        } else if currentElement == "url" && urlImage.isEmpty {
             urlImage += string
         }
-      //  }
     }
     
-    
+    // MARK: NSXMLParserDelegate
     func parserDidEndDocument(parser: NSXMLParser) {
         delegate?.parsingWasFinished()
+        
     }
     
     func parser(parser: NSXMLParser, parseErrorOccurred parseError: NSError) {
