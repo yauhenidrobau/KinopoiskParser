@@ -7,12 +7,15 @@
 //
 
 import UIKit
+import CoreData
 
 @objc protocol XMLParserDelegate {
     func parsingWasFinished()
 }
 
 class XMLParser: NSObject, NSXMLParserDelegate {
+    
+    var film: [Film] = []
     
     var arrParsedData = [Dictionary<String, String>]()
     
@@ -21,7 +24,7 @@ class XMLParser: NSObject, NSXMLParserDelegate {
     var currentElement = ""
     
     var foundCharacters = ""
-    var titleFeed = ""
+    var  titleFeed = ""
     var descriptionFeed = ""
     var pubDateFeed = ""
     var linkFeed :[String] = []
@@ -39,12 +42,13 @@ class XMLParser: NSObject, NSXMLParserDelegate {
     
     func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
        // if(elementName == "item"){
-            
+        
+        
             currentElement = elementName
         if (elementName as NSString).isEqualToString("item") {
             
             currentDataDictionary = Dictionary<String,String>()
-            titleFeed = ""
+           titleFeed = ""
             descriptionFeed = ""
             pubDateFeed = ""
             linkFeed = []
@@ -55,6 +59,8 @@ class XMLParser: NSObject, NSXMLParserDelegate {
     
     func parser(parser: NSXMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         
+       
+        //save data
         if (elementName as NSString).isEqualToString("item") {
             //  if(!foundCharacters.isEmpty)&&(foundCharacters != "\n"){
         
@@ -78,12 +84,32 @@ class XMLParser: NSObject, NSXMLParserDelegate {
         }
             
         if urlImage != ""{
+            
             foundCharacters = (foundCharacters as NSString).substringFromIndex(0)
             currentDataDictionary["url"] = urlImage
         }
           // foundCharacters = ""
         
-        
+            // save in CoreData
+            if let managedObjectContext = (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext {
+                film = NSEntityDescription.insertNewObjectForEntityForName("Film", inManagedObjectContext: managedObjectContext) as! Film
+                
+                film.titleFeed = currentDictionary["title"]
+                film.descriptionFeed = currentDictionary["description"]
+                film.pubDateFeed = currentDictionary["pubDate"]
+                film.linkFeed = currentDictionary["link"]
+              //  if let filmImageNews = cell.imageNewsView.image {
+                    film.urlImage = UIImagePNGRepresentation(filmImageNews)
+                    //self.imageView.sd_setImageWithURL(self.imageURL)
+              //  }
+                
+                do {
+                    try managedObjectContext.save()
+                } catch {
+                    print(error)
+                    //return
+                }
+            }
             arrParsedData.append(currentDataDictionary)
             //  }
         }

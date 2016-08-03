@@ -7,10 +7,16 @@
 //
 
 import UIKit
+import Foundation
+import CoreData
 
-class NewsTableViewController: UITableViewController, XMLParserDelegate {
+
+class NewsTableViewController: UITableViewController, XMLParserDelegate, NSFetchedResultsControllerDelegate {
 
     var parser: XMLParser!
+    var fetchedResultsController: NSFetchedResultsController!
+    var film: [Film] = []
+   // var film: Film!
     
     func parsingWasFinished() {
         self.tableView.reloadData()
@@ -18,10 +24,43 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let url = NSURL(string: "https://st.kp.yandex.net/rss/news.rss")
+        
+        var fetchRequest = NSFetchRequest(entityName: "Film")
+        var sortDescriptor = NSSortDescriptor(key: "titleNews", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        if let manageObjectContext = (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext {
+            fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: manageObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+            fetchedResultsController.delegate = self
+            
+            do {
+                try fetchedResultsController.performFetch()
+            } catch {
+                print(error)
+            }
+        }
+        
+        
+        // auto re-sizing cell
+        tableView.estimatedRowHeight = 80
+        tableView.rowHeight = UITableViewAutomaticDimension
+        
+        // Parsing
+        let url = NSURL(string: "https://www.kinopoisk.ru/news_premiers.rss")
         parser = XMLParser()
         parser.delegate = self
-        parser.beginParsing(url!)
+        
+    
+      //background threading
+        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
+        dispatch_async(dispatch_get_global_queue(priority, 0), { ()->() in
+             self.parser.beginParsing(url!)
+            dispatch_async(dispatch_get_main_queue(), {
+                self.parsingWasFinished()            })
+        })
+       
+        
+       
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -47,14 +86,50 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate {
         return parser.arrParsedData.count
     }
 
+    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        tableView.beginUpdates()
+    }
+    
+    //check if there is some changes ing Data Base
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+        switch type {
+        case .Insert:
+            if let _newindexPath = newIndexPath {
+                tableView.insertRowsAtIndexPaths([_newindexPath], withRowAnimation: .Fade)
+            }
+        case .Delete:
+            if let _newindexPath = newIndexPath {
+                tableView.deleteRowsAtIndexPaths([_newindexPath], withRowAnimation: .Fade)
+            }
+        case .Update:
+            if let _newindexPath = newIndexPath {
+                tableView.reloadRowsAtIndexPaths([_newindexPath], withRowAnimation: .Fade)
+            }
+        default:
+            tableView.reloadData()
+            
+            
+        }
+        
+        film = controller.fetchedObjects as! [Film]
+    }
+    
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        tableView.endUpdates()
+    }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! NewsTableViewCell
         let currentDictionary = parser.arrParsedData[indexPath.row] as Dictionary<String,String>
+        
+       
+        
+        
         cell.titleLabel?.text = currentDictionary["title"]
         cell.desctiptionLabel?.text = currentDictionary["description"]
         if currentDictionary["url"] != nil {
-        cell.imageNewsView?.image = UIImage(named: currentDictionary["url"]!)
+     //  cell.imageNewsView?.image = film.urlImage
         // Configure the cell...
         }
 
