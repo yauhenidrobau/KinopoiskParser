@@ -7,8 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		84646B1E1D513860008A433A /* CSDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84646B1C1D513860008A433A /* CSDataManager.swift */; settings = {ASSET_TAGS = (); }; };
+		84646B1E1D513860008A433A /* Film.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84646B1C1D513860008A433A /* Film.swift */; settings = {ASSET_TAGS = (); }; };
 		84B153861D522C86003063F4 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B153851D522C86003063F4 /* Constants.swift */; settings = {ASSET_TAGS = (); }; };
+		84B153881D531588003063F4 /* RemoteFacade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B153871D531588003063F4 /* RemoteFacade.swift */; settings = {ASSET_TAGS = (); }; };
+		84B1538A1D53159C003063F4 /* ParseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B153891D53159C003063F4 /* ParseManager.swift */; settings = {ASSET_TAGS = (); }; };
+		84B1538E1D53160D003063F4 /* ExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B1538D1D53160D003063F4 /* ExampleViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		84B153911D53560F003063F4 /* Film+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B153901D53560F003063F4 /* Film+CoreDataProperties.swift */; settings = {ASSET_TAGS = (); }; };
+		84B153931D535774003063F4 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B153921D535774003063F4 /* CoreDataManager.swift */; settings = {ASSET_TAGS = (); }; };
 		84E6E0E31D4FEDA7003DC634 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E6E0E21D4FEDA7003DC634 /* AppDelegate.swift */; };
 		84E6E0E81D4FEDA7003DC634 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84E6E0E61D4FEDA7003DC634 /* Main.storyboard */; };
 		84E6E0EB1D4FEDA7003DC634 /* KinopoiskParser.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 84E6E0E91D4FEDA7003DC634 /* KinopoiskParser.xcdatamodeld */; };
@@ -21,8 +26,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		84646B1C1D513860008A433A /* CSDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CSDataManager.swift; sourceTree = "<group>"; };
+		84646B1C1D513860008A433A /* Film.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Film.swift; sourceTree = "<group>"; };
 		84B153851D522C86003063F4 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		84B153871D531588003063F4 /* RemoteFacade.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemoteFacade.swift; sourceTree = "<group>"; };
+		84B153891D53159C003063F4 /* ParseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParseManager.swift; sourceTree = "<group>"; };
+		84B1538D1D53160D003063F4 /* ExampleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExampleViewController.swift; sourceTree = "<group>"; };
+		84B153901D53560F003063F4 /* Film+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Film+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		84B153921D535774003063F4 /* CoreDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		84E6E0DF1D4FEDA7003DC634 /* KinopoiskParser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KinopoiskParser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84E6E0E21D4FEDA7003DC634 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		84E6E0E71D4FEDA7003DC634 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -50,10 +60,10 @@
 		84B153821D522692003063F4 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				84E6E0F71D4FEE90003DC634 /* XMLParser.swift */,
-				84B153851D522C86003063F4 /* Constants.swift */,
-				84E6E0E91D4FEDA7003DC634 /* KinopoiskParser.xcdatamodeld */,
-				84646B1C1D513860008A433A /* CSDataManager.swift */,
+				84B1538C1D5315C2003063F4 /* Persistance */,
+				84B1538B1D5315AC003063F4 /* XML */,
+				84B153891D53159C003063F4 /* ParseManager.swift */,
+				84B153871D531588003063F4 /* RemoteFacade.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -61,18 +71,39 @@
 		84B153831D5228AB003063F4 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				84E6E0F91D4FEECE003DC634 /* NewsTableViewController.swift */,
 				84E6E0FB1D4FEF1C003DC634 /* DetailsViewController.swift */,
 				84E6E0FD1D4FF384003DC634 /* NewsTableViewCell.swift */,
+				84B1538D1D53160D003063F4 /* ExampleViewController.swift */,
 			);
 			name = UI;
 			sourceTree = "<group>";
 		};
-		84B153841D522AB8003063F4 /* Controller */ = {
+		84B1538B1D5315AC003063F4 /* XML */ = {
 			isa = PBXGroup;
 			children = (
-				84E6E0F91D4FEECE003DC634 /* NewsTableViewController.swift */,
+				84E6E0F71D4FEE90003DC634 /* XMLParser.swift */,
 			);
-			name = Controller;
+			name = XML;
+			sourceTree = "<group>";
+		};
+		84B1538C1D5315C2003063F4 /* Persistance */ = {
+			isa = PBXGroup;
+			children = (
+				84E6E0E91D4FEDA7003DC634 /* KinopoiskParser.xcdatamodeld */,
+				84646B1C1D513860008A433A /* Film.swift */,
+				84B153921D535774003063F4 /* CoreDataManager.swift */,
+				84B153901D53560F003063F4 /* Film+CoreDataProperties.swift */,
+			);
+			name = Persistance;
+			sourceTree = "<group>";
+		};
+		84B1538F1D53161F003063F4 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				84B153851D522C86003063F4 /* Constants.swift */,
+			);
+			name = Util;
 			sourceTree = "<group>";
 		};
 		84E6E0D61D4FEDA7003DC634 = {
@@ -94,8 +125,8 @@
 		84E6E0E11D4FEDA7003DC634 /* KinopoiskParser */ = {
 			isa = PBXGroup;
 			children = (
+				84B1538F1D53161F003063F4 /* Util */,
 				84E6E0E21D4FEDA7003DC634 /* AppDelegate.swift */,
-				84B153841D522AB8003063F4 /* Controller */,
 				84B153831D5228AB003063F4 /* UI */,
 				84B153821D522692003063F4 /* Model */,
 				84E6E0E61D4FEDA7003DC634 /* Main.storyboard */,
@@ -176,14 +207,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				84B1538E1D53160D003063F4 /* ExampleViewController.swift in Sources */,
 				84E6E0FA1D4FEECE003DC634 /* NewsTableViewController.swift in Sources */,
+				84B1538A1D53159C003063F4 /* ParseManager.swift in Sources */,
 				84E6E0F81D4FEE90003DC634 /* XMLParser.swift in Sources */,
 				84E6E0FE1D4FF384003DC634 /* NewsTableViewCell.swift in Sources */,
 				84E6E0EB1D4FEDA7003DC634 /* KinopoiskParser.xcdatamodeld in Sources */,
 				84E6E0E31D4FEDA7003DC634 /* AppDelegate.swift in Sources */,
-				84646B1E1D513860008A433A /* CSDataManager.swift in Sources */,
+				84B153931D535774003063F4 /* CoreDataManager.swift in Sources */,
+				84646B1E1D513860008A433A /* Film.swift in Sources */,
 				84E6E0FC1D4FEF1C003DC634 /* DetailsViewController.swift in Sources */,
+				84B153881D531588003063F4 /* RemoteFacade.swift in Sources */,
 				84B153861D522C86003063F4 /* Constants.swift in Sources */,
+				84B153911D53560F003063F4 /* Film+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

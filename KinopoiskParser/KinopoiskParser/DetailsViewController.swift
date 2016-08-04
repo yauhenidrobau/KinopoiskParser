@@ -11,12 +11,16 @@ import UIKit
 class DetailsViewController: UIViewController {
 
     @IBOutlet weak var webView: UIWebView!
+   
+    
     var newsUrl: NSURL!
+    
+    //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
         webView.hidden = true
-        // Do any additional setup after loading the view.
+        
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -33,11 +37,5 @@ class DetailsViewController: UIViewController {
         super.didReceiveMemoryWarning()
        
     }
-    
-
-    
-    // MARK: - Navigation
-
-
-
+   
 }

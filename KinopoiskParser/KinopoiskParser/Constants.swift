@@ -10,7 +10,7 @@ import UIKit
 
 class Constants: NSObject {
 
-    var url = NSURL(string: "http://news.tut.by/rss/all.rss")
+    var url = NSURL(string: "https://st.kp.yandex.net/rss/news_premiers.rss")
     
     
     /*

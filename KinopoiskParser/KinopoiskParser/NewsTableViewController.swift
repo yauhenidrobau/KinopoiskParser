@@ -13,32 +13,38 @@ import CoreData
 
 class NewsTableViewController: UITableViewController, XMLParserDelegate, NSFetchedResultsControllerDelegate {
 
-    //var parser: XMLParser!
-    let parser = XMLParser.sharedInstance
-    var const = Constants()
-    var fetchedResultsController: NSFetchedResultsController!
+    var parser = XMLParser()
+    let const = Constants()
+    let film = Film()
+    
+    //let FeedEntity = Film.sharedInstance
+    var fetchedResultsController: NSFetchedResultsController = {
+        let fetchRequest = NSFetchRequest(entityName: "Film")
+        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: CoreDataManager.instance.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        return fetchedResultsController
+    }()
     
     func parsingWasFinished() {
         self.tableView.reloadData()
     }
+    
+    //MARK: Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-       
+        parser.beginParsing(const.url!)
+            do {
+                try fetchedResultsController.performFetch()
+            } catch {
+                print (error)
+            }
+        
         // auto re-sizing cell
         tableView.estimatedRowHeight = 80
         tableView.rowHeight = UITableViewAutomaticDimension
         
-        //background threading
-        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
-        dispatch_async(dispatch_get_global_queue(priority, 0), { ()->() in
-            
-            self.parser.beginParsing(self.const.url!)
-        
-            dispatch_async(dispatch_get_main_queue(), {
-                self.parsingWasFinished()
-            })
-        })
-       
+               
     }
 
     override func didReceiveMemoryWarning() {
@@ -53,7 +59,12 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, NSFetch
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (self.parser.arrParsedData.count)
+        if let sections = fetchedResultsController.sections {
+        return  sections[section].numberOfObjects
+        } else {
+            return 0
+            
+        }
     }
 
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
@@ -91,14 +102,14 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, NSFetch
         
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! NewsTableViewCell
         let currentDictionary = parser.arrParsedData[indexPath.row] as Dictionary<String,String>
-        
+       let filmNews = fetchedResultsController.objectAtIndexPath(indexPath) as! Film
        
         
         
-        cell.titleLabel?.text = currentDictionary["title"]
-        cell.desctiptionLabel?.text = currentDictionary["description"]
+        cell.titleLabel?.text = filmNews.titleFeed
+        cell.desctiptionLabel?.text = filmNews.descriptionFeed
         if currentDictionary["url"] != nil {
-            cell.imageNewsView?.image = UIImage(named: currentDictionary["url"]!)
+            cell.imageNewsView?.image = UIImage(data: filmNews.urlImage!)
         }
 
         return cell

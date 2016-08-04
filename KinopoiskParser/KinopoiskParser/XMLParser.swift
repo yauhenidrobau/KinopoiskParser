@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Foundation
 
 @objc protocol XMLParserDelegate {
     func parsingWasFinished()
@@ -36,13 +37,26 @@ class XMLParser: NSObject, NSXMLParserDelegate {
     
     var delegate : XMLParserDelegate?
     
-  
     
-    func beginParsing(rssNews : NSURL) {
-        let parser = NSXMLParser(contentsOfURL: rssNews)
-        parser?.delegate = self
-        parser?.parse()
+    
+    func beginParsing(rssNews : NSURL)  {
+        
+        
+        //background threading
+        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
+        dispatch_async(dispatch_get_global_queue(priority, 0), { ()->() in
+            let parser = NSXMLParser(contentsOfURL: rssNews)
+            parser?.delegate = self
+            parser?.parse()
+            
+            dispatch_async(dispatch_get_main_queue(), {
+             delegate?.parsingWasFinished()
+            })
+        })
     }
+    
+    
+
     
     func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
             currentElement = elementName
@@ -87,7 +101,8 @@ class XMLParser: NSObject, NSXMLParserDelegate {
             arrParsedData.append(currentDataDictionary)
         }
     }
-
+    
+     
     
     func parser(parser: NSXMLParser, foundCharacters string: String) {
        
@@ -107,6 +122,7 @@ class XMLParser: NSObject, NSXMLParserDelegate {
     // MARK: NSXMLParserDelegate
     func parserDidEndDocument(parser: NSXMLParser) {
         delegate?.parsingWasFinished()
+        
         
     }
     
