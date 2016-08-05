@@ -18,9 +18,8 @@ class Film : NSManagedObject {
     var urlImage = ""
 */
 
-    let parser = XMLParser.sharedInstance
+   // let parser = XMLParser.sharedInstance
     static let sharedInstance = Film()
-    var const = Constants()
     var fetchedResultsController: NSFetchedResultsController!
     
     
@@ -29,87 +28,83 @@ class Film : NSManagedObject {
        
         // Создание нового объекта
         self.init(entity: CoreDataManager.instance.entityForName("Film"), insertIntoManagedObjectContext: CoreDataManager.instance.managedObjectContext)
-        
     }
     
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Создание нового объекта
+    func setup() -> Void {
         
         let parser = XMLParser()
-        let NewsURL = Constants()
-        parser.beginParsing(NewsURL.url!)
+        let entityDescription = NSEntityDescription.entityForName("Film", inManagedObjectContext: self.managedObjectContext!)
+        let managedObject = NSManagedObject(entity: entityDescription!, insertIntoManagedObjectContext: self.managedObjectContext)
         
-        // Установка значения атрибута
+        parser.loadData()
+        
+       // parser.beginParsing(Constants.url!)
+        
+        // Set value to Context
         for count in parser.arrParsedData{
             let currentDictionary = count as Dictionary<String,String>
-            let managedObject = Film()
+          //let managedObject = Film()
             
-            managedObject.titleFeed = currentDictionary["title"]
-            managedObject.descriptionFeed = currentDictionary["description"]
-            managedObject.pubDateFeed = currentDictionary["pubDate"]
-            managedObject.linkFeed = currentDictionary["link"]
+            managedObject.setValue(currentDictionary["title"], forKey: "titleFeed" )
+            managedObject.setValue(currentDictionary["description"], forKey: "descriptionFeed" )
+            managedObject.setValue(currentDictionary["pubDate"], forKey: "pubDateFeed" )
+            managedObject.setValue(currentDictionary["link"], forKey: "linkFeed" )
+            //managedObjectsetValue(currentDictionary["urlImage"],forKey: UIImagePNGRepresentation(UIImage(named: currentDictionary["urlImage"] !)))
             
-            managedObject.urlImage = UIImagePNGRepresentation(UIImage(named: currentDictionary["urlImage"]!)!)
-            
-            // Запись объекта
-            CoreDataManager.instance.saveContext()
+            // SaveData
+           self.saveFilms()
+        }
+           // CoreDataManager.instance.saveContext()
             
             // Извление записей
-            let fetchRequest = NSFetchRequest(entityName: "Film")
-            do {
-                let results = try CoreDataManager.instance.managedObjectContext.executeFetchRequest(fetchRequest)
-                for result in results as! [Film] {
-                    print("name - \(result.titleFeed!)")
+          /*
+*/
+       
+    }
+  
+    func saveFilms() {
+        
+            if managedObjectContext!.hasChanges {
+                do {
+                    try managedObjectContext!.save()
+                } catch {
+                    let nserror = error as NSError
+                    NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
+                    abort()
                 }
-            } catch {
-                print(error)
             }
-            
-        }
-        return true
     }
-   /*
-    func showData(){
-        var fetchRequest = NSFetchRequest(entityName: "Film")
-        var sortDescriptor = NSSortDescriptor(key: "titleNews", ascending: true)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-    
-        if let manageObjectContext = (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext {
-            fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: manageObjectContext, sectionNameKeyPath: nil, cacheName: nil)
-            fetchedResultsController.delegate = self
-        
-            do {
-                try fetchedResultsController.performFetch()
-            } catch {
-                print(error)
-            }
-        }
-    }
-    
-    func saveData(){
-        
-    if let managedObjectContext = (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext {
-        sharedInstance.
-        sharedInstance = NSEntityDescription.insertNewObjectForEntityForName("Film", inManagedObjectContext: managedObjectContext) as! Film
-        
-        sharedInstance.titleFeed =  currentDictionary["title"]
-        sharedInstance.descriptionFeed = currentDictionary["description"]
-        sharedInstance.pubDateFeed = currentDictionary["pubDate"]
-        sharedInstance.linkFeed = currentDictionary["link"]
-        //  if let filmImageNews = cell.imageNewsView.image {
-        sharedInstance.urlImage = UIImagePNGRepresentation(filmImageNews)
-        //self.imageView.sd_setImageWithURL(self.imageURL)
-        //  }
-        
+    func getFilms(){
+        let fetchRequest = NSFetchRequest(entityName: "Film")
         do {
-            try managedObjectContext.save()
+            let results = try CoreDataManager.instance.managedObjectContext.executeFetchRequest(fetchRequest)
+            for result in results as! [Film] {
+                print("name - \(result.titleFeed!)")
+            }
         } catch {
             print(error)
-            //return
         }
+        
+    
     }
-    }
-*/
 
+    /*
+    func showData(){
+    var fetchRequest = NSFetchRequest(entityName: "Film")
+    var sortDescriptor = NSSortDescriptor(key: "titleNews", ascending: true)
+    fetchRequest.sortDescriptors = [sortDescriptor]
+    
+    if let manageObjectContext = (UIApplication.sharedApplication().delegate as? AppDelegate)?.managedObjectContext {
+    fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: manageObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+    fetchedResultsController.delegate = self
+    
+    do {
+    try fetchedResultsController.performFetch()
+    } catch {
+    print(error)
+    }
+    }
+    }
+    */
 }
 

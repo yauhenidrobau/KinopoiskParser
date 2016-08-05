@@ -11,38 +11,29 @@ import CoreData
 import Foundation
 
 @objc protocol XMLParserDelegate {
-    func parsingWasFinished()
-}
+    func parserDidFinishParsing()}
 
 class XMLParser: NSObject, NSXMLParserDelegate {
     
-   // var film: [Film] = []
+   //MARK: Properties
     static let sharedInstance = XMLParser()
     
-    
-        
     var arrParsedData = [Dictionary<String, String>]()
-    
     var currentDataDictionary = Dictionary<String, String>()
-    
     var currentElement = ""
-    
     var foundCharacters = ""
     var  titleFeed = ""
     var descriptionFeed = ""
     var pubDateFeed = ""
     var linkFeed :[String] = []
-    
     var urlImage = ""
+    var xmlParserDelegate : NSXMLParserDelegate?
+    var parserDelegate : XMLParserDelegate?
+
     
-    var delegate : XMLParserDelegate?
-    
-    
-    
-    func beginParsing(rssNews : NSURL)  {
+    //MARK: Lifestyle
+    func prepareData(rssNews : NSURL)  {
         
-        
-        //background threading
         let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
         dispatch_async(dispatch_get_global_queue(priority, 0), { ()->() in
             let parser = NSXMLParser(contentsOfURL: rssNews)
@@ -50,12 +41,14 @@ class XMLParser: NSObject, NSXMLParserDelegate {
             parser?.parse()
             
             dispatch_async(dispatch_get_main_queue(), {
-             delegate?.parsingWasFinished()
+             parserDelegate?.parserDidFinishParsing()
             })
         })
     }
     
-    
+    func loadData() -> Void {
+        prepareData(Constants.url!)
+    }
 
     
     func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
@@ -121,8 +114,11 @@ class XMLParser: NSObject, NSXMLParserDelegate {
     
     // MARK: NSXMLParserDelegate
     func parserDidEndDocument(parser: NSXMLParser) {
-        delegate?.parsingWasFinished()
+        parserDelegate?.parserDidFinishParsing()
+       
         
+        
+
         
     }
     

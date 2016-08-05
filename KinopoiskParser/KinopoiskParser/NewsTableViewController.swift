@@ -11,10 +11,12 @@ import Foundation
 import CoreData
 
 
-class NewsTableViewController: UITableViewController, XMLParserDelegate, NSFetchedResultsControllerDelegate {
+class NewsTableViewController: UITableViewController, NSXMLParserDelegate,XMLParserDelegate, NSFetchedResultsControllerDelegate {
 
+    
+    //MARK: Properties
+    
     var parser = XMLParser()
-    let const = Constants()
     let film = Film()
     
     //let FeedEntity = Film.sharedInstance
@@ -26,50 +28,69 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, NSFetch
         return fetchedResultsController
     }()
     
-    func parsingWasFinished() {
-        self.tableView.reloadData()
-    }
-    
     //MARK: Lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        parser.beginParsing(const.url!)
-            do {
-                try fetchedResultsController.performFetch()
-            } catch {
-                print (error)
-            }
+        
+        //parser.beginParsing(Constants.url!)
+       
+        film.setup()
+        parser.parserDelegate = self
+        film.saveFilms()
+
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            print (error)
+        }
         
         // auto re-sizing cell
         tableView.estimatedRowHeight = 80
         tableView.rowHeight = UITableViewAutomaticDimension
-        
-               
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        
-    }
-
-    // MARK: - Table view data source
+    // MARK: - UITableViewDataSource
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let sections = fetchedResultsController.sections {
-        return  sections[section].numberOfObjects
-        } else {
-            return 0
-            
+        guard let sections = fetchedResultsController.sections else { return 0 }
+        return sections.count > section ? sections[section].numberOfObjects : 0
+    }
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        let cell_ = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
+        guard let cell = cell_ as? NewsTableViewCell else { // ! - приведение к типу таким образом может привести к крэшу, если вдруг там будет какой-то другой тип, а не тот, что ты ожидаешь
+            return cell_
         }
+         // почему ты отсюда достаешь урл, а из базы все остальное
+        
+        if let filmItem = fetchedResultsController.objectAtIndexPath(indexPath) as? Film {
+            cell.film?.titleFeed = filmItem.titleFeed // лучше в селле добавить проперти фильм и там просто переопределить сэттэр
+            cell.film?.descriptionFeed = filmItem.descriptionFeed
+        
+        }
+        return cell
     }
-
-    func controllerWillChangeContent(controller: NSFetchedResultsController) {
-        tableView.beginUpdates()
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        let filmItem =  fetchedResultsController
+            .objectAtIndexPath(indexPath) as? Film
+        
+        let newsLink = filmItem!.linkFeed
+        let newsViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("idDetailsController") as! DetailsViewController // почему не performSegue ???
+        newsViewController.newsUrl = NSURL(string: newsLink!)
+        showDetailViewController(newsViewController, sender: self)
     }
+    
+    
+  
+    
+    //MARK: NSFetchedResultsControllerDelegate
     
     //check if there is some changes ing Data Base
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
@@ -88,84 +109,19 @@ class NewsTableViewController: UITableViewController, XMLParserDelegate, NSFetch
             }
         default:
             tableView.reloadData()
-            
-            
         }
-        
     }
     
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
         tableView.endUpdates()
     }
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! NewsTableViewCell
-        let currentDictionary = parser.arrParsedData[indexPath.row] as Dictionary<String,String>
-       let filmNews = fetchedResultsController.objectAtIndexPath(indexPath) as! Film
-       
-        
-        
-        cell.titleLabel?.text = filmNews.titleFeed
-        cell.desctiptionLabel?.text = filmNews.descriptionFeed
-        if currentDictionary["url"] != nil {
-            cell.imageNewsView?.image = UIImage(data: filmNews.urlImage!)
-        }
-
-        return cell
+    func parserDidFinishParsing() {
+        self.tableView.reloadData()
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let dictionary = parser.arrParsedData[indexPath.row] as Dictionary<String,String>
-        let newsLink = dictionary["link"]
-        let newsViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("idDetailsController") as! DetailsViewController
-        newsViewController.newsUrl = NSURL(string: newsLink!)
-        showDetailViewController(newsViewController, sender: self)
+    func controllerWillChangeContent(controller: NSFetchedResultsController) {
+        tableView.beginUpdates()
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-        if editingStyle == .Delete {
-            // Delete the row from the data source
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
-        } else if editingStyle == .Insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
