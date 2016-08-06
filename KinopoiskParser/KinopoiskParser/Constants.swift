@@ -10,12 +10,4 @@ import UIKit
 
 class Constants: NSObject {
 
-    var url = NSURL(string: "https://st.kp.yandex.net/rss/news_premiers.rss")
-    
-    
-    /*
-    init(url: NSURL) {
-        self.url = url
-    }
-    */
-}
+    static let url = NSURL(string: "https://st.kp.yandex.net/rss/news_premiers.rss") }

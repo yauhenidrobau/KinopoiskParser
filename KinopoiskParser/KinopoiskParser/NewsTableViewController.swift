@@ -29,7 +29,9 @@ class NewsTableViewController: UITableViewController, NSXMLParserDelegate,XMLPar
     }()
     
     //MARK: Lifecycle
-    
+    func parserDidFinishParsing(){
+        film.saveFilms()
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -37,7 +39,7 @@ class NewsTableViewController: UITableViewController, NSXMLParserDelegate,XMLPar
        
         film.setup()
         parser.parserDelegate = self
-        film.saveFilms()
+        
 
         do {
             try fetchedResultsController.performFetch()
@@ -63,15 +65,14 @@ class NewsTableViewController: UITableViewController, NSXMLParserDelegate,XMLPar
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let cell_ = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
-        guard let cell = cell_ as? NewsTableViewCell else { // ! - приведение к типу таким образом может привести к крэшу, если вдруг там будет какой-то другой тип, а не тот, что ты ожидаешь
+        let cell_ = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)     
+        guard let cell = cell_ as? NewsTableViewCell else {
             return cell_
         }
-         // почему ты отсюда достаешь урл, а из базы все остальное
         
         if let filmItem = fetchedResultsController.objectAtIndexPath(indexPath) as? Film {
-            cell.film?.titleFeed = filmItem.titleFeed // лучше в селле добавить проперти фильм и там просто переопределить сэттэр
-            cell.film?.descriptionFeed = filmItem.descriptionFeed
+            cell.titleLabel.text = filmItem.titleFeed
+            cell.descriptionLabel.text = filmItem.descriptionFeed
         
         }
         return cell
@@ -116,9 +117,6 @@ class NewsTableViewController: UITableViewController, NSXMLParserDelegate,XMLPar
         tableView.endUpdates()
     }
     
-    func parserDidFinishParsing() {
-        self.tableView.reloadData()
-    }
     
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
         tableView.beginUpdates()
