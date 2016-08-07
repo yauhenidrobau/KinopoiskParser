@@ -13,31 +13,31 @@ import CoreData
 
 class NewsTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
     
-   
-  
-
-    
     //MARK: Properties
     
-
+    
     var fetchedResultsController: NSFetchedResultsController = {
+       
         let fetchRequest = NSFetchRequest(entityName: "Film")
         let sortDescriptor = NSSortDescriptor(key: "titleFeed", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: CoreDataManager.instance.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         return fetchedResultsController
         }()
+    
 
-    
-    
     //MARK: Lifecycle
    
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadData()
         setAppierance()
         updateData()
+        loadData()
         
+           }
+    
+    override func viewWillAppear(animated: Bool) {
+        navigationController?.hidesBarsOnSwipe = true
     }
     
     // MARK: - UITableViewDataSource
@@ -47,6 +47,7 @@ class NewsTableViewController: UITableViewController, NSFetchedResultsController
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+       
         guard let sections = fetchedResultsController.sections else { return 0 }
         return sections.count > section ? sections[section].numberOfObjects : 0
     }
@@ -115,26 +116,33 @@ class NewsTableViewController: UITableViewController, NSFetchedResultsController
         tableView.beginUpdates()
     }
     
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return UIStatusBarStyle.Default
+    }
+    
     private func setAppierance() -> Void {
         // auto re-sizing cell
         tableView.estimatedRowHeight = 80
         tableView.rowHeight = UITableViewAutomaticDimension
+        
+    
     }
     
     private func loadData() -> Void {
-        
+       
 
-        
         do {
             try fetchedResultsController.performFetch()
         } catch {
             print (error)
         }
+       
 
     }
     
     private func updateData() -> Void {
         DataManager.instance.updateData()
     }
+
 
 }

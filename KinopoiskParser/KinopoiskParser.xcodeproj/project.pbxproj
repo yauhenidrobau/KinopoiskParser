@@ -60,8 +60,6 @@
 			children = (
 				84B1538C1D5315C2003063F4 /* Persistance */,
 				84B1538B1D5315AC003063F4 /* XML */,
-				84B153871D531588003063F4 /* RemoteFacade.swift */,
-				8400C0341D568EFA00911C03 /* DataManager.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -91,6 +89,8 @@
 				84E6E0E91D4FEDA7003DC634 /* KinopoiskParser.xcdatamodeld */,
 				84646B1C1D513860008A433A /* Film.swift */,
 				84B153921D535774003063F4 /* CoreDataManager.swift */,
+				84B153871D531588003063F4 /* RemoteFacade.swift */,
+				8400C0341D568EFA00911C03 /* DataManager.swift */,
 			);
 			name = Persistance;
 			sourceTree = "<group>";

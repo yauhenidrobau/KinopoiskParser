@@ -29,11 +29,11 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="jeA-7L-QKL" firstAttribute="leading" secondItem="JgY-zc-xkY" secondAttribute="leadingMargin" constant="-20" id="5ad-LB-Fo6"/>
-                            <constraint firstItem="tcJ-Hb-BpM" firstAttribute="top" secondItem="U7a-De-3TH" secondAttribute="bottom" constant="282" id="fHm-pe-jiJ"/>
+                            <constraint firstItem="U7a-De-3TH" firstAttribute="centerY" secondItem="jeA-7L-QKL" secondAttribute="centerY" id="ULZ-ju-htf"/>
                             <constraint firstItem="tcJ-Hb-BpM" firstAttribute="top" secondItem="jeA-7L-QKL" secondAttribute="bottom" id="kT1-Kb-RC4"/>
                             <constraint firstItem="jeA-7L-QKL" firstAttribute="top" secondItem="JgY-zc-xkY" secondAttribute="topMargin" id="mUX-9f-fFb"/>
                             <constraint firstAttribute="trailingMargin" secondItem="jeA-7L-QKL" secondAttribute="trailing" constant="-20" id="tZf-Gb-KKw"/>
-                            <constraint firstItem="U7a-De-3TH" firstAttribute="leading" secondItem="JgY-zc-xkY" secondAttribute="leading" constant="282" id="xZs-ZF-RHl"/>
+                            <constraint firstItem="U7a-De-3TH" firstAttribute="centerX" secondItem="jeA-7L-QKL" secondAttribute="centerX" id="xcL-w3-OWn"/>
                         </constraints>
                     </view>
                     <connections>
