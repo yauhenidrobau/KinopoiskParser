@@ -2,7 +2,7 @@
 //  NewsTableViewCell.swift
 //  KinopoiskParser
 //
-//  Created by Admin on 02.08.16.
+//  Created by Admin on 01.08.16.
 //  Copyright © 2016 Admin. All rights reserved.
 //
 

@@ -12,7 +12,6 @@ import CoreData
 class CoreDataManager {
     //Singleton
     static let instance = CoreDataManager()
-    
    
     enum FilmError: ErrorType {
         case NoFilms
@@ -23,8 +22,7 @@ class CoreDataManager {
     func entityForName (entityName: String) -> NSEntityDescription {
         return NSEntityDescription.entityForName(entityName, inManagedObjectContext: CoreDataManager.instance.managedObjectContext)!
     }
-    
-    
+
     
     // MARK: - Core Data stack
     
@@ -91,46 +89,45 @@ class CoreDataManager {
     
     func saveFilms(films: [Dictionary<String,String>]) -> Void {
         
-        
-        
-        
         // Set value to Context
         for filmInfo in films {
-            //begin create film
-            guard let entityDescription = NSEntityDescription.entityForName("Film", inManagedObjectContext: managedObjectContext)  else { continue }
-            guard let filmEntity = NSManagedObject(entity: entityDescription, insertIntoManagedObjectContext: managedObjectContext) as? Film else { continue }
-            
+            guard let filmTitle = filmInfo["title"] else {continue}
             let fetchRequest = NSFetchRequest(entityName: "Film")
-            let predicate = NSPredicate(format: "titleFeed == %ld", filmEntity.titleFeed!)
+            let predicate = NSPredicate(format: "titleFeed == %@", filmTitle)
             fetchRequest.predicate = predicate
-            do {
-                
-                let fetchResults = try managedObjectContext.executeFetchRequest(fetchRequest) as? [Film]
-                if fetchResults!.count > 0 {
-                    DataManager.instance.updateData()
-                    
-                } else {
-                    //   let fetchedEntities = self.managedObjectContext.executeFetchRequest(fetchRequest) as! [Film]
-                    
-                    //end create film
-                    
-                    //refresh data
-                    filmEntity.titleFeed = filmInfo["title"]
-                    filmEntity.descriptionFeed = filmInfo["description"]
-                    filmEntity.pubDateFeed = filmInfo["pubDate"]
-                    filmEntity.linkFeed = filmInfo["link"]
-                    filmEntity.urlImage = filmInfo["urlImage"]
-                    
+            
+            do{
+                var filmToBeSaved : Film?
+                if let fetchResults = try managedObjectContext.executeFetchRequest(fetchRequest) as? [Film]{
+                    if fetchResults.count > 0 {
+                        if let film_ = fetchResults.first as Film? {
+                            filmToBeSaved = film_
+                        }
+                    }
+                 else {
+                    //begin create film
+                     let entityDescription = NSEntityDescription.entityForName("Film", inManagedObjectContext: managedObjectContext)
+                let filmEntity = NSManagedObject(entity: entityDescription!, insertIntoManagedObjectContext: managedObjectContext) as? Film
+                    filmToBeSaved = filmEntity
                 }
-                
-                
+                guard let filmToBeSaved_ = filmToBeSaved else {continue}
+                //refresh data
+                filmToBeSaved_.titleFeed = filmInfo["title"]
+                filmToBeSaved_.descriptionFeed = filmInfo["description"]
+                filmToBeSaved_.pubDateFeed = filmInfo["pubDate"]
+                filmToBeSaved_.linkFeed = filmInfo["link"]
+                filmToBeSaved_.urlImage = filmInfo["urlImage"]
+}
             } catch FilmError.NoFilms {
                 print("No Films")
+            } catch (let err) {
+            
             }
         
-            // SaveData
-            saveContext()
+    // SaveData
+    saveContext()
         }
     }
-
+    
+    
 }

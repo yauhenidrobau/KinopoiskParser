@@ -19,8 +19,6 @@ class XMLParser: NSObject, NSXMLParserDelegate {
    //MARK: Properties
     static let sharedInstance = XMLParser()
     
-    
-    
     var arrParsedData = [Dictionary<String, String>]()
     var currentDataDictionary = Dictionary<String, String>()
     var currentElement = ""

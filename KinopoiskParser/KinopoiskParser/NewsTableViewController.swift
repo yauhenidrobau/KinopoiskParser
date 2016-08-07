@@ -14,6 +14,7 @@ import CoreData
 class NewsTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
     
    
+  
 
     
     //MARK: Properties
@@ -85,7 +86,7 @@ class NewsTableViewController: UITableViewController, NSFetchedResultsController
     
     //MARK: NSFetchedResultsControllerDelegate
     
-    //check if there is some changes ing Data Base
+    //check if there is some changes in Data Base
     func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
         switch type {
         case .Insert:
