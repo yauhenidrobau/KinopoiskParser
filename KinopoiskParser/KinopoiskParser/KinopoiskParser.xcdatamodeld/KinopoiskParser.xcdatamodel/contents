@@ -5,7 +5,7 @@
         <attribute name="linkFeed" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="pubDateFeed" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="titleFeed" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="urlImage" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
+        <attribute name="urlImage" optional="YES" attributeType="String" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
     </entity>
     <elements>
         <element name="Film" positionX="-63" positionY="-18" width="128" height="120"/>

@@ -8,10 +8,11 @@
 
 import UIKit
 
-class DetailsViewController: UIViewController {
+class DetailsViewController: UIViewController, UIWebViewDelegate {
 
     @IBOutlet weak var webView: UIWebView!
    
+    @IBOutlet weak var activityInd: UIActivityIndicatorView!
     
     var newsUrl: NSURL!
     
@@ -20,10 +21,11 @@ class DetailsViewController: UIViewController {
         super.viewDidLoad()
 
         webView.hidden = true
-        
+       
     }
     
     override func viewDidAppear(animated: Bool) {
+       activityInd.hidden = true
         if newsUrl != nil {
            var request: NSURLRequest = NSURLRequest(URL: newsUrl)
             webView.loadRequest(request)
@@ -36,6 +38,16 @@ class DetailsViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
        
+    }
+    
+    func webViewDidStartLoad(webView: UIWebView) {
+        activityInd.hidden = false
+        activityInd.startAnimating()
+    }
+    
+    func webViewDidFinishLoad(webView: UIWebView) {
+        activityInd.hidden = true
+        activityInd.stopAnimating()
     }
    
 }

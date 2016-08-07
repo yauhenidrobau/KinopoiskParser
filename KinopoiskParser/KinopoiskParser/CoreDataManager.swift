@@ -13,10 +13,18 @@ class CoreDataManager {
     //Singleton
     static let instance = CoreDataManager()
     
+   
+    enum FilmError: ErrorType {
+        case NoFilms
+        
+    }
+    
     //Entity for Name
     func entityForName (entityName: String) -> NSEntityDescription {
         return NSEntityDescription.entityForName(entityName, inManagedObjectContext: CoreDataManager.instance.managedObjectContext)!
     }
+    
+    
     
     // MARK: - Core Data stack
     
@@ -46,7 +54,7 @@ class CoreDataManager {
             dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
             dict[NSLocalizedFailureReasonErrorKey] = failureReason
             
-            dict[NSUnderlyingErrorKey] = error as? NSError
+            dict[NSUnderlyingErrorKey] = error as NSError
             let wrappedError = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
             // Replace this with code to handle the error appropriately.
             // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
@@ -78,6 +86,50 @@ class CoreDataManager {
                 NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
                 abort()
             }
+        }
+    }
+    
+    func saveFilms(films: [Dictionary<String,String>]) -> Void {
+        
+        
+        
+        
+        // Set value to Context
+        for filmInfo in films {
+            //begin create film
+            guard let entityDescription = NSEntityDescription.entityForName("Film", inManagedObjectContext: managedObjectContext)  else { continue }
+            guard let filmEntity = NSManagedObject(entity: entityDescription, insertIntoManagedObjectContext: managedObjectContext) as? Film else { continue }
+            
+            let fetchRequest = NSFetchRequest(entityName: "Film")
+            let predicate = NSPredicate(format: "titleFeed == %ld", filmEntity.titleFeed!)
+            fetchRequest.predicate = predicate
+            do {
+                
+                let fetchResults = try managedObjectContext.executeFetchRequest(fetchRequest) as? [Film]
+                if fetchResults!.count > 0 {
+                    DataManager.instance.updateData()
+                    
+                } else {
+                    //   let fetchedEntities = self.managedObjectContext.executeFetchRequest(fetchRequest) as! [Film]
+                    
+                    //end create film
+                    
+                    //refresh data
+                    filmEntity.titleFeed = filmInfo["title"]
+                    filmEntity.descriptionFeed = filmInfo["description"]
+                    filmEntity.pubDateFeed = filmInfo["pubDate"]
+                    filmEntity.linkFeed = filmInfo["link"]
+                    filmEntity.urlImage = filmInfo["urlImage"]
+                    
+                }
+                
+                
+            } catch FilmError.NoFilms {
+                print("No Films")
+            }
+        
+            // SaveData
+            saveContext()
         }
     }
 

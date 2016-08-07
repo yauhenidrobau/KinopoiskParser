@@ -11,12 +11,15 @@ import CoreData
 import Foundation
 
 @objc protocol XMLParserDelegate {
-    func parserDidFinishParsing()}
+    func xmlParserDidFinishParsing(items: [Dictionary<String,String>]?, error: NSError?) -> Void
+}
 
 class XMLParser: NSObject, NSXMLParserDelegate {
     
    //MARK: Properties
     static let sharedInstance = XMLParser()
+    
+    
     
     var arrParsedData = [Dictionary<String, String>]()
     var currentDataDictionary = Dictionary<String, String>()
@@ -32,21 +35,14 @@ class XMLParser: NSObject, NSXMLParserDelegate {
 
     
     //MARK: Lifestyle
-    func prepareData(rssNews : NSURL)  {
-        
-        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
-        dispatch_async(dispatch_get_global_queue(priority, 0), { ()->() in
-            let parser = NSXMLParser(contentsOfURL: rssNews)
-            parser?.delegate = self
-            parser?.parse()
-            
-            dispatch_async(dispatch_get_main_queue(), {
-                
-                
-            })
-        })
+   
+    func parseData(data: NSData) -> Void{
+        let parser = NSXMLParser.init(data: data)
+        parser.delegate = self
+        parser.parse()
     }
-        func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
+    
+    func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
             self.currentElement = elementName
             if (elementName as NSString).isEqualToString("item") {
                 
@@ -106,15 +102,13 @@ class XMLParser: NSObject, NSXMLParserDelegate {
             }
         }
         
-    func loadData() -> Void {
-        prepareData(Constants.url!)
-    }
+    
 
     
     
     // MARK: NSXMLParserDelegate
     func parserDidEndDocument(parser: NSXMLParser) {
-        parserDelegate?.parserDidFinishParsing()
+        parserDelegate?.xmlParserDidFinishParsing(arrParsedData, error: nil)
        
     }
     

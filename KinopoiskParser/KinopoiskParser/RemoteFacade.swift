@@ -14,17 +14,27 @@ class RemoteFacade: NSObject {
     static let sharedInstance = RemoteFacade()
 
     enum DataLoadingResult {
-        case Success(items:NSData) // не уверен,в чем там приходит результат
+        case Success(items:NSData?)
         case OfflineError
         case UnexpectedError(error:NSError?)
     }
     
     func loadData(dataURL: String, callback:(result:DataLoadingResult) -> Void) -> Void {
-        // тут ты загружаешь данные
-        
-        
-        
+        // load data
+        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
+        dispatch_async(dispatch_get_global_queue(priority, 0), { ()->() in
+            if let url = NSURL.init(string: dataURL) {
+                let xmlData = NSData.init(contentsOfURL: url)
+                dispatch_async(dispatch_get_main_queue(), {
+                callback(result: .Success(items: xmlData))
+            
+            
+            })
+            }else {
+            dispatch_async(dispatch_get_main_queue(), {
+                callback(result: .UnexpectedError(error: NSError(domain: "UnexpectedErrorDomain", code: -666, userInfo: nil)))
+            })
+            }
+        })
     }
-    
-    
 }

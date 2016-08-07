@@ -11,47 +11,34 @@ import Foundation
 import CoreData
 
 
-class NewsTableViewController: UITableViewController, NSXMLParserDelegate,XMLParserDelegate, NSFetchedResultsControllerDelegate {
+class NewsTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+    
+   
 
     
     //MARK: Properties
     
-    var parser = XMLParser()
-    let film = Film()
-    
-    //let FeedEntity = Film.sharedInstance
+
     var fetchedResultsController: NSFetchedResultsController = {
         let fetchRequest = NSFetchRequest(entityName: "Film")
-        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+        let sortDescriptor = NSSortDescriptor(key: "titleFeed", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: CoreDataManager.instance.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         return fetchedResultsController
-    }()
+        }()
+
+    
     
     //MARK: Lifecycle
-    func parserDidFinishParsing(){
-        film.saveFilms()
-    }
+   
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadData()
+        setAppierance()
+        updateData()
         
-        //parser.beginParsing(Constants.url!)
-       
-        film.setup()
-        parser.parserDelegate = self
-        
-
-        do {
-            try fetchedResultsController.performFetch()
-        } catch {
-            print (error)
-        }
-        
-        // auto re-sizing cell
-        tableView.estimatedRowHeight = 80
-        tableView.rowHeight = UITableViewAutomaticDimension
     }
-
+    
     // MARK: - UITableViewDataSource
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -79,13 +66,18 @@ class NewsTableViewController: UITableViewController, NSXMLParserDelegate,XMLPar
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let filmItem =  fetchedResultsController
-            .objectAtIndexPath(indexPath) as? Film
-        
-        let newsLink = filmItem!.linkFeed
-        let newsViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewControllerWithIdentifier("idDetailsController") as! DetailsViewController // почему не performSegue ???
-        newsViewController.newsUrl = NSURL(string: newsLink!)
-        showDetailViewController(newsViewController, sender: self)
+        guard let filmItem =  fetchedResultsController
+            .objectAtIndexPath(indexPath) as? Film  else {return}
+        performSegueWithIdentifier("detailFilmSegue", sender: filmItem.linkFeed)
+    }
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if let destinationVC = segue.destinationViewController as? DetailsViewController{
+            if let url = sender as? String {
+                if let detailUrl = NSURL.init(string: url){
+                    destinationVC.newsUrl = detailUrl
+                }
+            }
+        }
     }
     
     
@@ -120,6 +112,28 @@ class NewsTableViewController: UITableViewController, NSXMLParserDelegate,XMLPar
     
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
         tableView.beginUpdates()
+    }
+    
+    private func setAppierance() -> Void {
+        // auto re-sizing cell
+        tableView.estimatedRowHeight = 80
+        tableView.rowHeight = UITableViewAutomaticDimension
+    }
+    
+    private func loadData() -> Void {
+        
+
+        
+        do {
+            try fetchedResultsController.performFetch()
+        } catch {
+            print (error)
+        }
+
+    }
+    
+    private func updateData() -> Void {
+        DataManager.instance.updateData()
     }
 
 }
