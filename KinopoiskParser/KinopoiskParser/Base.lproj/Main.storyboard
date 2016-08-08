@@ -113,12 +113,13 @@
                             </tableViewCell>
                         </prototypes>
                         <connections>
-                            <outlet property="dataSource" destination="kpV-HB-bvD" id="aTU-2H-5kU"/>
-                            <outlet property="delegate" destination="kpV-HB-bvD" id="gd2-ck-JyM"/>
+                            <outlet property="dataSource" destination="kpV-HB-bvD" id="Dj9-hc-TID"/>
+                            <outlet property="delegate" destination="kpV-HB-bvD" id="BWV-3f-v02"/>
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="News" id="6k3-QF-WqO"/>
                     <connections>
+                        <outlet property="tableView" destination="bl1-D3-PVA" id="eGz-gI-nVr"/>
                         <outlet property="view" destination="bl1-D3-PVA" id="dqC-6e-iKI"/>
                         <segue destination="zIp-tD-3td" kind="show" identifier="detailFilmSegue" id="kNC-kS-7fV"/>
                     </connections>

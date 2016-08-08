@@ -14,16 +14,7 @@ import CoreData
 class NewsTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
     
     //MARK: Properties
-    
-    
-    var fetchedResultsController: NSFetchedResultsController = {
-       
-        let fetchRequest = NSFetchRequest(entityName: "Film")
-        let sortDescriptor = NSSortDescriptor(key: "titleFeed", ascending: true)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: CoreDataManager.instance.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
-        return fetchedResultsController
-        }()
+    var fetchedResultsController = CoreDataManager.instance.fetchedResultsController("Film", keyForSort: "titleFeed")
     
 
     //MARK: Lifecycle
@@ -33,11 +24,12 @@ class NewsTableViewController: UITableViewController, NSFetchedResultsController
         setAppierance()
         updateData()
         loadData()
-        
+        fetchedResultsController.delegate = self
            }
     
     override func viewWillAppear(animated: Bool) {
         navigationController?.hidesBarsOnSwipe = true
+        
     }
     
     // MARK: - UITableViewDataSource
@@ -50,6 +42,7 @@ class NewsTableViewController: UITableViewController, NSFetchedResultsController
        
         guard let sections = fetchedResultsController.sections else { return 0 }
         return sections.count > section ? sections[section].numberOfObjects : 0
+ 
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -65,6 +58,15 @@ class NewsTableViewController: UITableViewController, NSFetchedResultsController
         
         }
         return cell
+    }
+    
+     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if let sections = fetchedResultsController.sections {
+            let currentSection = sections[section]
+            return currentSection.name
+        }
+        
+        return nil
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -100,6 +102,10 @@ class NewsTableViewController: UITableViewController, NSFetchedResultsController
             }
         case .Update:
             if let _newindexPath = newIndexPath {
+                let cell = self.tableView.cellForRowAtIndexPath(_newindexPath) as? NewsTableViewCell
+                 let filmItem = fetchedResultsController.objectAtIndexPath(_newindexPath) as? Film
+                    cell!.titleLabel.text = filmItem!.titleFeed
+                    cell!.descriptionLabel.text = filmItem!.descriptionFeed
                 tableView.reloadRowsAtIndexPaths([_newindexPath], withRowAnimation: .Fade)
             }
         default:
@@ -107,13 +113,35 @@ class NewsTableViewController: UITableViewController, NSFetchedResultsController
         }
     }
     
+    func controller(controller: NSFetchedResultsController, sectionIndexTitleForSectionName sectionName: String) -> String? {
+        return sectionName
+    }
+    
     func controllerDidChangeContent(controller: NSFetchedResultsController) {
         tableView.endUpdates()
     }
     
+    func controller(
+        controller: NSFetchedResultsController,
+        didChangeSection sectionInfo: NSFetchedResultsSectionInfo,
+        atIndex sectionIndex: Int,
+        forChangeType type: NSFetchedResultsChangeType) {
+            
+            switch type {
+            case .Insert:
+                let sectionIndexSet = NSIndexSet(index: sectionIndex)
+                self.tableView.insertSections(sectionIndexSet, withRowAnimation: UITableViewRowAnimation.Fade)
+            case .Delete:
+                let sectionIndexSet = NSIndexSet(index: sectionIndex)
+                self.tableView.deleteSections(sectionIndexSet, withRowAnimation: UITableViewRowAnimation.Fade)
+            default:
+                ""
+            }
+    }
+    
     
     func controllerWillChangeContent(controller: NSFetchedResultsController) {
-        tableView.beginUpdates()
+        self.tableView.beginUpdates()
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {

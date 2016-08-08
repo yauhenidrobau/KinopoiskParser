@@ -22,7 +22,15 @@ class CoreDataManager {
     func entityForName (entityName: String) -> NSEntityDescription {
         return NSEntityDescription.entityForName(entityName, inManagedObjectContext: CoreDataManager.instance.managedObjectContext)!
     }
-
+    
+    
+     func fetchedResultsController(entityName: String, keyForSort: String) -> NSFetchedResultsController {
+        let fetchRequest = NSFetchRequest(entityName: "Film")
+        let sortDescriptor = NSSortDescriptor(key: "titleFeed", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        let  fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: CoreDataManager.instance.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        return fetchedResultsController
+}
     
     // MARK: - Core Data stack
     
@@ -109,7 +117,7 @@ class CoreDataManager {
                      let entityDescription = NSEntityDescription.entityForName("Film", inManagedObjectContext: managedObjectContext)
                 let filmEntity = NSManagedObject(entity: entityDescription!, insertIntoManagedObjectContext: managedObjectContext) as? Film
                     filmToBeSaved = filmEntity
-                }
+                    
                 guard let filmToBeSaved_ = filmToBeSaved else {continue}
                 //refresh data
                 filmToBeSaved_.titleFeed = filmInfo["title"]
@@ -117,16 +125,20 @@ class CoreDataManager {
                 filmToBeSaved_.pubDateFeed = filmInfo["pubDate"]
                 filmToBeSaved_.linkFeed = filmInfo["link"]
                 filmToBeSaved_.urlImage = filmInfo["urlImage"]
-}
+                        // SaveData
+                        saveContext()
+                }
+                }
             } catch FilmError.NoFilms {
                 print("No Films")
             } catch (let err) {
             
             }
-        
-    // SaveData
-    saveContext()
+            
+            
         }
+        
+        
     }
     
     
