@@ -45,7 +45,7 @@
             </objects>
             <point key="canvasLocation" x="562" y="579"/>
         </scene>
-        <!--News-->
+        <!--List of films-->
         <scene sceneID="2sM-tP-Xca">
             <objects>
                 <tableViewController clearsSelectionOnViewWillAppear="NO" id="kpV-HB-bvD" customClass="NewsTableViewController" customModule="KinopoiskParser" customModuleProvider="target" sceneMemberID="viewController">
@@ -117,7 +117,11 @@
                             <outlet property="delegate" destination="kpV-HB-bvD" id="BWV-3f-v02"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="News" id="6k3-QF-WqO"/>
+                    <navigationItem key="navigationItem" title="List of films" id="6k3-QF-WqO">
+                        <barButtonItem key="backBarButtonItem" title="To films" id="nqc-h4-HUo">
+                            <color key="tintColor" red="0.035320695639999997" green="0.56408975589999999" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="bl1-D3-PVA" id="eGz-gI-nVr"/>
                         <outlet property="view" destination="bl1-D3-PVA" id="dqC-6e-iKI"/>
